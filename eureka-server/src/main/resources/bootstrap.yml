@@ -1,0 +1,43 @@
+spring:
+  application:
+    name: EUREKA-SERVER
+  profiles:
+    active: dev
+---
+spring:
+  profiles: dev
+server:
+  port: 7700
+eureka:
+  instance:
+    hostname: localhost
+  server:
+    enable-self-preservation: false # 自我保护机制，开启的话，短时间内如果剔除了多个服务，则将会保护注册表，不再剔除过多的服务
+    eviction-interval-timer-in-ms: 5000 # 扫描失效服务的时间间隔
+  client:
+    registerWithEureka: false
+    fetchRegistry: false
+    serviceUrl:
+      defaultZone: http://localhost:7700/eureka/
+---
+spring:
+  profiles: eureka-server1
+server:
+  port: 7701
+eureka:
+  instance:
+    hostname: eureka-server1
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7702/eureka/
+---
+spring:
+  profiles: eureka-server2
+server:
+  port: 7702
+eureka:
+  instance:
+    hostname: eureka-server2
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7701/eureka/

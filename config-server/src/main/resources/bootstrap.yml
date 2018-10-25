@@ -1,0 +1,46 @@
+spring:
+  application:
+    name: CONFIG-SERVER
+  profiles:
+    active: dev
+---
+server:
+  port: 7800
+spring:
+  profiles: dev
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/tosim/config-repo.git
+          search-paths: cloud
+          username:
+          password:
+      label: master
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7700/eureka/
+    registry-fetch-interval-seconds: 5 # 表示多久去注册中心拉取服务信息,如果不依赖其他服务，可以不设置
+  instance:
+    lease-renewal-interval-in-seconds: 5 # 心跳时间，表示每几秒向注册中心发送心跳
+    lease-expiration-duration-in-seconds: 10 # 发呆时间，在此时间内没有发送心跳，则剔除此服务
+---
+server:
+  port: 7800
+spring:
+  profiles: test
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/tosim/config-repo.git
+          search-paths: cloud
+          username:
+          password:
+      label: master
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7700/eureka/
+

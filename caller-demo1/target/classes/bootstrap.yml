@@ -1,0 +1,40 @@
+# 通过找到注册中心，就能找到配置中心，通过配置中心的服务名，就能找到此服务对应的所有配置
+# 所以找到注册中心和配置中心就能找到此服务的所有配置了
+spring:
+  application:
+    name: CALLER-DEMO1
+  profiles:
+    active: dev # 默认开启开发环境，当指定环境时，将会被替换掉
+  cloud:
+    config:
+      label: master
+#      profile: dev # 与spring.profiles.active会保持一致
+#      uri: http://localhost:7800/ 如果不是通过服务方式找到配置中心，按照url也可以找到配置，此时也可以不指定注册中心，因为能直接找到配置
+      discovery:
+        enabled: true
+        service-id: CONFIG-SERVER
+---
+spring:
+  profiles: dev
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:7700/eureka/
+    registry-fetch-interval-seconds: 5 # 表示多久去注册中心拉取服务信息,如果不依赖其他服务，可以不设置
+  instance:
+    lease-renewal-interval-in-seconds: 5 # 心跳时间，表示每几秒向注册中心发送心跳
+    lease-expiration-duration-in-seconds: 10 # 发呆时间，在此时间内没有发送心跳，则剔除此服务
+---
+spring:
+  profiles: test
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://peer1:7700/eureka/, http://peer2:7701/eureka/
+---
+spring:
+  profiles: prod
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://edu-config.163.org:7700/eureka/, http://edu-config.163.org:7701/eureka/, http://edu-config.163.org:7702/eureka/
